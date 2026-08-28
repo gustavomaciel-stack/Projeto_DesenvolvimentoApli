@@ -1,59 +1,30 @@
+import { useState } from 'react';
+import { CurrentUserProvider } from './context/CurrentUserContext';
+import { UserSwitcher } from './components/UserSwitcher';
+import { MatchList } from './components/MatchList';
+import { MatchDetail } from './components/MatchDetail';
+import { MatchForm } from './components/MatchForm';
+import type { Match } from './services/api';
+import './App.css';
+
+type View = 'list' | 'detail' | 'create' | 'edit';
+
 function App() {
-  function mostrarMensagem() {
-    alert("As partidas serão disponibilizadas em breve!");
-  }
+  const [view, setView] = useState<View>('list');
+  const [selectedMatchId, setSelectedMatchId] = useState('');
+  const [editingMatch, setEditingMatch] = useState<Match>();
 
-  return (
-    <div className="pagina">
-      <header>
-        <h1>MatchPoint</h1>
-        <p>Organize suas partidas esportivas.</p>
-      </header>
-
-      <main>
-        <section>
-          <h2>Sobre o projeto</h2>
-
-          <p>
-            O MatchPoint será um sistema para criar partidas, controlar vagas
-            e confirmar a participação dos jogadores.
-          </p>
-
-          <button onClick={mostrarMensagem}>Ver partidas</button>
-        </section>
-
-        <section>
-          <h2>Tecnologias utilizadas</h2>
-
-          <div className="tecnologias">
-            <div className="card">
-              <h3>Front-end</h3>
-              <p>React com TypeScript</p>
-            </div>
-
-            <div className="card">
-              <h3>Back-end</h3>
-              <p>Node.js com Express</p>
-            </div>
-
-            <div className="card">
-              <h3>ORM</h3>
-              <p>Prisma ORM</p>
-            </div>
-
-            <div className="card">
-              <h3>Banco de dados</h3>
-              <p>MySQL</p>
-            </div>
-          </div>
-        </section>
+  return <CurrentUserProvider>
+    <div className="app-shell">
+      <header className="topbar"><div><p className="eyebrow">Partidas entre amigos</p><h1>MatchPoint</h1></div><UserSwitcher /></header>
+      <main className="content">
+        {view === 'list' && <MatchList onCreate={() => setView('create')} onSelect={(id) => { setSelectedMatchId(id); setView('detail'); }} />}
+        {view === 'detail' && <MatchDetail id={selectedMatchId} onBack={() => setView('list')} onEdit={(match) => { setEditingMatch(match); setView('edit'); }} />}
+        {view === 'create' && <MatchForm mode="create" onCancel={() => setView('list')} onSuccess={(id) => { setSelectedMatchId(id); setView('detail'); }} />}
+        {view === 'edit' && editingMatch && <MatchForm mode="edit" initialMatch={editingMatch} onCancel={() => setView('detail')} onSuccess={() => setView('detail')} />}
       </main>
-
-      <footer>
-        <p>MatchPoint — Projeto em desenvolvimento</p>
-      </footer>
     </div>
-  );
+  </CurrentUserProvider>;
 }
 
 export default App;
