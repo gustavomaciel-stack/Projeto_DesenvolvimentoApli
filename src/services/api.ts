@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
 
 export type User = {
   id: string;
@@ -7,7 +7,7 @@ export type User = {
   createdAt: string;
 };
 
-export type MatchStatus = 'ABERTA' | 'COMPLETA' | 'CONCLUIDA' | 'CANCELADA';
+export type MatchStatus = "ABERTA" | "COMPLETA" | "CONCLUIDA" | "CANCELADA";
 
 export type Match = {
   id: string;
@@ -44,25 +44,34 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...options?.headers,
     },
   });
 
   const body = await response.json().catch(() => null);
   if (!response.ok) {
-    throw new Error(body?.message ?? 'Não foi possível concluir a solicitação.');
+    throw new Error(
+      body?.message ?? "Não foi possível concluir a solicitação.",
+    );
   }
 
   return body as T;
 }
 
-export function registerUser(data: { name: string; email: string; password: string }) {
-  return request<User>('/users', { method: 'POST', body: JSON.stringify(data) });
+export function registerUser(data: {
+  name: string;
+  email: string;
+  password: string;
+}) {
+  return request<User>("/users", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
 export function listUsers() {
-  return request<User[]>('/users');
+  return request<User[]>("/users");
 }
 
 export function getUser(id: string) {
@@ -70,7 +79,7 @@ export function getUser(id: string) {
 }
 
 export function listMatches() {
-  return request<Match[]>('/matches');
+  return request<Match[]>("/matches");
 }
 
 export function getMatch(id: string) {
@@ -78,23 +87,41 @@ export function getMatch(id: string) {
 }
 
 export function createMatch(data: MatchInput) {
-  return request<Match>('/matches', { method: 'POST', body: JSON.stringify(data) });
+  return request<Match>("/matches", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
-export function updateMatch(id: string, data: Partial<Omit<MatchInput, 'organizerId'>> & { organizerId: string }) {
-  return request<Match>(`/matches/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export function updateMatch(
+  id: string,
+  data: Partial<Omit<MatchInput, "organizerId">> & { organizerId: string },
+) {
+  return request<Match>(`/matches/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
 }
 
 export function cancelMatch(id: string, organizerId: string) {
-  return request<Match>(`/matches/${id}/cancel`, { method: 'PATCH', body: JSON.stringify({ organizerId }) });
+  return request<Match>(`/matches/${id}/cancel`, {
+    method: "PATCH",
+    body: JSON.stringify({ organizerId }),
+  });
 }
 
 export function joinMatch(id: string, userId: string) {
-  return request('/matches/' + id + '/join', { method: 'POST', body: JSON.stringify({ userId }) });
+  return request("/matches/" + id + "/join", {
+    method: "POST",
+    body: JSON.stringify({ userId }),
+  });
 }
 
 export function leaveMatch(id: string, userId: string) {
-  return request('/matches/' + id + '/leave', { method: 'POST', body: JSON.stringify({ userId }) });
+  return request("/matches/" + id + "/leave", {
+    method: "POST",
+    body: JSON.stringify({ userId }),
+  });
 }
 
 export function getParticipants(id: string) {

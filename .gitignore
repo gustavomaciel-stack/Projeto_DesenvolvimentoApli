@@ -7,11 +7,16 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+#next.js build output
+/.next/
+/out/
+
 node_modules/
 dist/
 dist-ssr/
 .env
 .env.*
+.env*.local
 !.env.example
 *.local
 
