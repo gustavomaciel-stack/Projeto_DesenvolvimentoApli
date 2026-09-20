@@ -1,7 +1,7 @@
-import { AppError } from '../errors/AppError.js';
-import { matchRepository } from '../repositories/matchRepository.js';
-import { participationRepository } from '../repositories/participationRepository.js';
-import { userRepository } from '../repositories/userRepository.js';
+import { AppError } from "../errors/AppError.js";
+import { matchRepository } from "../repositories/matchRepository.js";
+import { participationRepository } from "../repositories/participationRepository.js";
+import { userRepository } from "../repositories/userRepository.js";
 
 export type MatchInput = {
   sport: string;
@@ -18,15 +18,18 @@ const parseMatchInput = (data: MatchInput) => {
   const parsedDate = new Date(date);
 
   if (!sport || !location || !date || !time || !organizerId) {
-    throw new AppError('Esporte, local, data, horário e organizador são obrigatórios.', 400);
+    throw new AppError(
+      "Esporte, local, data, horário e organizador são obrigatórios.",
+      400,
+    );
   }
 
   if (!Number.isInteger(parsedVacancies) || parsedVacancies <= 0) {
-    throw new AppError('A quantidade de vagas deve ser maior que zero.', 400);
+    throw new AppError("A quantidade de vagas deve ser maior que zero.", 400);
   }
 
   if (Number.isNaN(parsedDate.getTime())) {
-    throw new AppError('A data da partida é inválida.', 400);
+    throw new AppError("A data da partida é inválida.", 400);
   }
 
   return {
@@ -45,7 +48,7 @@ export const matchService = {
     const organizer = await userRepository.findById(input.organizerId);
 
     if (!organizer) {
-      throw new AppError('Organizador não encontrado.', 404);
+      throw new AppError("Organizador não encontrado.", 404);
     }
 
     return matchRepository.create(input);
@@ -71,30 +74,36 @@ export const matchService = {
   getById: async (id: string) => {
     const match = await matchRepository.findById(id);
     if (!match) {
-      throw new AppError('Partida não encontrada.', 404);
+      throw new AppError("Partida não encontrada.", 404);
     }
 
     const participants = await participationRepository.findConfirmedByMatch(id);
 
-    return { ...match, participants: participants.map((participation) => participation.user) };
+    return {
+      ...match,
+      participants: participants.map((participation) => participation.user),
+    };
   },
 
   update: async (id: string, data: MatchInput) => {
     const match = await matchRepository.findById(id);
     if (!match) {
-      throw new AppError('Partida não encontrada.', 404);
+      throw new AppError("Partida não encontrada.", 404);
     }
     if (match.organizerId !== data.organizerId) {
-      throw new AppError('Apenas o organizador pode editar esta partida.', 403);
+      throw new AppError("Acesso negado.", 403);
     }
-    if (match.status === 'CANCELADA' || match.status === 'CONCLUIDA') {
-      throw new AppError('Esta partida não pode mais ser editada.', 400);
+    if (match.status === "CANCELADA" || match.status === "CONCLUIDA") {
+      throw new AppError("Esta partida não pode mais ser editada.", 400);
     }
 
     const input = parseMatchInput(data);
     const confirmed = await matchRepository.countConfirmedParticipants(id);
     if (input.vacancies < confirmed) {
-      throw new AppError('As vagas não podem ser menores que os participantes confirmados.', 400);
+      throw new AppError(
+        "As vagas não podem ser menores que os participantes confirmados.",
+        400,
+      );
     }
 
     return matchRepository.update(id, {
@@ -109,13 +118,13 @@ export const matchService = {
   cancel: async (id: string, organizerId: string) => {
     const match = await matchRepository.findById(id);
     if (!match) {
-      throw new AppError('Partida não encontrada.', 404);
+      throw new AppError("Partida não encontrada.", 404);
     }
     if (match.organizerId !== organizerId) {
-      throw new AppError('Apenas o organizador pode cancelar esta partida.', 403);
+      throw new AppError("Acesso negado.", 403);
     }
-    if (match.status === 'CANCELADA') {
-      throw new AppError('A partida já está cancelada.', 400);
+    if (match.status === "CANCELADA") {
+      throw new AppError("A partida já está cancelada.", 400);
     }
 
     return matchRepository.cancel(id);

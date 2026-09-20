@@ -1,4 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
+export const TOKEN_STORAGE_KEY = "matchpoint_token";
 
 export type User = {
   id: string;
@@ -41,22 +42,58 @@ export type MatchInput = {
 };
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY);
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options?.headers,
     },
   });
 
   const body = await response.json().catch(() => null);
   if (!response.ok) {
+    if (response.status === 401) {
+      localStorage.removeItem(TOKEN_STORAGE_KEY);
+    }
     throw new Error(
       body?.message ?? "Não foi possível concluir a solicitação.",
     );
   }
 
   return body as T;
+}
+
+export function login(email: string, password: string) {
+  return request<{ token: string }>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export function saveToken(token: string) {
+  localStorage.setItem(TOKEN_STORAGE_KEY, token);
+}
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_STORAGE_KEY);
+}
+
+export function logout() {
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
+}
+
+export function getTokenUserId(token: string) {
+  try {
+    const payload = token.split(".")[1];
+    const decoded = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/")),
+    );
+    return typeof decoded.userId === "string" ? decoded.userId : "";
+  } catch {
+    return "";
+  }
 }
 
 export function registerUser(data: {
