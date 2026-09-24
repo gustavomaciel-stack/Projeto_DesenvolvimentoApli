@@ -44,31 +44,17 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
   const refreshUsers = async (preferredUserId?: string) => {
     const nextUsers = await listUsers();
     setUsers(nextUsers);
+
     const authenticatedUserId =
       preferredUserId ?? getTokenUserId(getToken() ?? "");
 
-    let nextCurrentUserId = "";
+    const nextCurrentUserId =
+      authenticatedUserId &&
+      nextUsers.some((user) => user.id === authenticatedUserId)
+        ? authenticatedUserId
+        : nextUsers[0]?.id ?? "";
 
-    setCurrentUserId((selectedId) => {
-      if (
-        authenticatedUserId &&
-        nextUsers.some((user) => user.id === authenticatedUserId)
-      ) {
-        nextCurrentUserId = authenticatedUserId;
-        return authenticatedUserId;
-      }
-
-      if (!getToken()) {
-        nextCurrentUserId = "";
-        return "";
-      }
-
-      nextCurrentUserId = nextUsers.some((user) => user.id === selectedId)
-        ? selectedId
-        : (nextUsers[0]?.id ?? "");
-      return nextCurrentUserId;
-    });
-
+    setCurrentUserId(nextCurrentUserId);
     setCurrentUser(
       nextUsers.find((user) => user.id === nextCurrentUserId) ?? undefined,
     );
@@ -78,7 +64,25 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
     const { token, user } = await login(email, password);
     saveToken(token);
     const userId = getTokenUserId(token) || user?.id || "";
+
     setIsAuthenticated(true);
+    setCurrentUserId(userId);
+    setCurrentUser(user ?? undefined);
+
+    if (user) {
+      setUsers((previousUsers) => {
+        const existingUser = previousUsers.find((item) => item.id === user.id);
+
+        if (existingUser) {
+          return previousUsers.map((item) =>
+            item.id === user.id ? { ...item, ...user } : item,
+          );
+        }
+
+        return [user, ...previousUsers];
+      });
+    }
+
     await refreshUsers(userId);
   };
 
