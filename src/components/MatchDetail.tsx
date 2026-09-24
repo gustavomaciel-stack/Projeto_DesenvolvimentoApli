@@ -92,7 +92,7 @@ export function MatchDetail({ id, onBack, onEdit }: Props) {
           <h2>{match.sport}</h2>
           <p>
             {match.location} ·{' '}
-            {new Date(match.date).toLocaleDateString('pt-BR')} às {match.time}
+            {new Date(match.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })} às {match.time}
           </p>
         </div>
 

@@ -134,7 +134,7 @@ export function MatchList({ mode, onCreate, onSelect }: Props) {
               <p>{match.location}</p>
               <p>
                 <strong>
-                  {new Date(match.date).toLocaleDateString('pt-BR')}
+                  {new Date(match.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
                 </strong>{' '}
                 às {match.time}
               </p>
