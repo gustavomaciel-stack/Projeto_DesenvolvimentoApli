@@ -3,6 +3,7 @@ import {
   CurrentUserProvider,
   useCurrentUser,
 } from './context/CurrentUserContext';
+import { AdminUsersPanel } from './components/AdminUsersPanel';
 import { AuthPage } from './components/AuthPage';
 import { MatchList } from './components/MatchList';
 import { MatchDetail } from './components/MatchDetail';
@@ -10,10 +11,10 @@ import { MatchForm } from './components/MatchForm';
 import type { Match } from './services/api';
 import './App.css';
 
-type View = 'list' | 'my-matches' | 'detail' | 'create' | 'edit' | 'login';
+type View = 'list' | 'my-matches' | 'detail' | 'create' | 'edit' | 'login' | 'admin-users';
 
 function AppContent() {
-  const { currentUserId, isAuthenticated, logoutUser, users } =
+  const { currentUserId, isAuthenticated, logoutUser, users, isAdmin } =
     useCurrentUser();
 
   const [view, setView] = useState<View>('login');
@@ -38,19 +39,19 @@ function AppContent() {
 
         {view !== 'login' && (
           <nav className="topbar-actions" aria-label="Navegação principal">
-            <button
-              type="button"
-              onClick={() => setView('my-matches')}
-            >
+            <button type="button" onClick={() => setView('my-matches')}>
               Minhas partidas
             </button>
 
-            <button
-              type="button"
-              onClick={() => setView('list')}
-            >
+            <button type="button" onClick={() => setView('list')}>
               Explorar partidas
             </button>
+
+            {isAdmin && (
+              <button type="button" onClick={() => setView('admin-users')}>
+                Usuários
+              </button>
+            )}
 
             {isAuthenticated ? (
               <button
@@ -85,6 +86,10 @@ function AppContent() {
               setView('detail');
             }}
           />
+        )}
+
+        {view === 'admin-users' && (
+          <AdminUsersPanel onBack={() => setView('my-matches')} />
         )}
 
         {view === 'my-matches' && (

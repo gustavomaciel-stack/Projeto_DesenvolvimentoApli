@@ -6,6 +6,9 @@ type Props = {
   onSuccess: () => void;
 };
 
+const ADMIN_EMAIL = 'admin@matchpoint.com';
+const ADMIN_PASSWORD = 'admin123';
+
 export function AuthPage({ onSuccess }: Props) {
   const { loginUser } = useCurrentUser();
   const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -53,6 +56,25 @@ export function AuthPage({ onSuccess }: Props) {
             ? 'Entre para criar partidas e participar dos jogos.'
             : 'Cadastre-se para começar a participar.'}
         </p>
+
+        {mode === 'login' && (
+          <div className="admin-credentials">
+            <span>Admin padrão</span>
+            <strong>{ADMIN_EMAIL}</strong>
+            <small>Senha: {ADMIN_PASSWORD}</small>
+            <button
+              type="button"
+              className="button secondary small"
+              onClick={() => {
+                setEmail(ADMIN_EMAIL);
+                setPassword(ADMIN_PASSWORD);
+                setError('');
+              }}
+            >
+              Usar conta admin
+            </button>
+          </div>
+        )}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {mode === 'register' && (

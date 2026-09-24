@@ -94,17 +94,30 @@ npm run dev
 
 Frontend local: `http://localhost:5173`
 
+## Acesso administrativo
+
+O sistema agora cria um administrador padrão ao iniciar o backend.
+
+Credenciais padrão:
+
+- E-mail: `admin@matchpoint.com`
+- Senha: `admin123`
+
+Esse usuário pode excluir partidas e remover contas de outros usuários pelo painel administrativo.
+
 ## Endpoints principais
 
 - `GET /health`
 - `POST /users`
 - `GET /users`
 - `GET /users/:id`
+- `DELETE /users/:id` (admin)
 - `POST /matches`
 - `GET /matches`
 - `GET /matches/:id`
 - `PUT /matches/:id`
 - `PATCH /matches/:id/cancel`
+- `DELETE /matches/:id` (admin)
 - `POST /matches/:id/join`
 - `POST /matches/:id/leave`
 - `GET /matches/:id/participants`

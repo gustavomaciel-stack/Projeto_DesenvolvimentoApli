@@ -2,10 +2,13 @@ const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
 
 export const TOKEN_STORAGE_KEY = "matchpoint_token";
 
+export type UserRole = 'USER' | 'ADMIN';
+
 export type User = {
   id: string;
   name: string;
   email: string;
+  role: UserRole;
   createdAt: string;
 };
 
@@ -72,7 +75,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export function login(email: string, password: string) {
-  return request<{ token: string }>("/auth/login", {
+  return request<{ token: string; user?: User }>('/auth/login', {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
@@ -151,6 +154,18 @@ export function cancelMatch(id: string, organizerId: string) {
   return request<Match>(`/matches/${id}/cancel`, {
     method: "PATCH",
     body: JSON.stringify({ organizerId }),
+  });
+}
+
+export function deleteMatch(id: string) {
+  return request<{ deleted: true }>(`/matches/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export function deleteUser(id: string) {
+  return request<{ deleted: true }>(`/users/${id}`, {
+    method: "DELETE",
   });
 }
 

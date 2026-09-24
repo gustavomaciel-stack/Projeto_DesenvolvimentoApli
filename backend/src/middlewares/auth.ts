@@ -1,8 +1,8 @@
-import type { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import type { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 
 const unauthorized = (res: Response) => {
-  return res.status(401).json({ message: "Não autenticado." });
+  return res.status(401).json({ message: 'Não autenticado.' });
 };
 
 export const authMiddleware = (
@@ -10,7 +10,7 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  const authorization = req.get("Authorization");
+  const authorization = req.get('Authorization');
   const match = authorization?.match(/^Bearer\s+(\S+)$/i);
   const jwtSecret = process.env.JWT_SECRET;
 
@@ -22,14 +22,15 @@ export const authMiddleware = (
     const payload = jwt.verify(match[1], jwtSecret);
 
     if (
-      typeof payload === "string" ||
-      typeof payload.userId !== "string" ||
-      !payload.userId
+      typeof payload === 'string' ||
+      typeof payload.userId !== 'string' ||
+      !payload.userId ||
+      (payload.role !== 'USER' && payload.role !== 'ADMIN')
     ) {
       return unauthorized(res);
     }
 
-    req.user = { userId: payload.userId };
+    req.user = { userId: payload.userId, role: payload.role };
     return next();
   } catch {
     return unauthorized(res);

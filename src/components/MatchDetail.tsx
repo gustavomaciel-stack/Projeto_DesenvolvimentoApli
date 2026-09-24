@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   cancelMatch,
+  deleteMatch,
   getMatch,
   joinMatch,
   leaveMatch,
@@ -22,7 +23,7 @@ const labels = {
 };
 
 export function MatchDetail({ id, onBack, onEdit }: Props) {
-  const { currentUserId, users } = useCurrentUser();
+  const { currentUserId, users, isAdmin } = useCurrentUser();
   const [match, setMatch] = useState<Match | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -138,6 +139,32 @@ export function MatchDetail({ id, onBack, onEdit }: Props) {
               </button>
             </>
           )}
+
+        {isAdmin && (
+          <button
+            className="button danger"
+            onClick={async () => {
+              const confirmed = window.confirm(
+                'Deseja excluir esta partida permanentemente?',
+              );
+
+              if (!confirmed) {
+                return;
+              }
+
+              try {
+                await deleteMatch(id);
+                onBack();
+              } catch (err) {
+                setError(
+                  err instanceof Error ? err.message : 'Erro ao excluir partida.',
+                );
+              }
+            }}
+          >
+            Excluir partida
+          </button>
+        )}
 
         {!isOrganizer && isParticipant && (
           <button

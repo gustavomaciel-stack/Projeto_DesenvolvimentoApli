@@ -12,6 +12,12 @@
   color: #fff;
 }
 
+.topbar-user {
+  margin-top: 8px;
+  color: #f0d39a;
+  font: 700 14px Arial, sans-serif;
+}
+
 .topbar h1, h2, h3, p { margin-top: 0; }
 .topbar h1 { margin-bottom: 0; font-size: 2.4rem; }
 
@@ -64,6 +70,10 @@ select, input {
 .button.secondary { background: #356b5d; }
 .button.secondary:hover { background: #285448; }
 .button.danger { background: #b94a42; }
+.button.small {
+  padding: 8px 12px;
+  font-size: 12px;
+}
 
 .section-heading, .detail-header {
   display: flex;
@@ -111,6 +121,13 @@ select, input {
 .status-concluida { background: #e3e5e4; color: #5e6561; }
 
 .match-card .button { margin-top: 8px; }
+
+.match-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
 
 .empty {
   text-align: center;
@@ -245,6 +262,63 @@ select, input {
   text-decoration: underline;
 }
 
+.admin-credentials {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border: 1px solid #d7ddd8;
+  border-radius: 6px;
+  background: #f7f5ef;
+  color: #183f35;
+}
+
+.admin-credentials span,
+.admin-credentials small {
+  color: #4e5d57;
+}
+
+.admin-panel {
+  display: grid;
+  gap: 20px;
+}
+
+.admin-user-list {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-user-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid #d7ddd8;
+  border-radius: 6px;
+}
+
+.admin-user-card h3 {
+  margin: 0 0 4px;
+}
+
+.role-badge {
+  display: inline-block;
+  margin-top: 8px;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font: 700 11px Arial, sans-serif;
+}
+
+.role-user { background: #edf3ef; color: #285448; }
+.role-admin { background: #f7e6c3; color: #7a4f08; }
+
+.admin-note {
+  margin-top: 0;
+  font-size: 13px;
+}
+
 @media (max-width: 700px) {
   .topbar, .section-heading, .detail-header {
     align-items: stretch;
@@ -257,6 +331,7 @@ select, input {
   .participant-list li { flex-direction: column; gap: 4px; }
   .topbar-actions { justify-content: flex-start; }
   .auth-card { padding: 24px; }
+  .admin-user-card { flex-direction: column; align-items: flex-start; }
 }
 .topbar-user {
   margin: 10px 0 0;

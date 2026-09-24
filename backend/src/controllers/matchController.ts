@@ -61,4 +61,17 @@ export const matchController = {
       next(err);
     }
   },
+  remove: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user) {
+        throw new AppError('Não autenticado.', 401);
+      }
+
+      res
+        .status(200)
+        .json(await matchService.remove(req.params.id, req.user.role));
+    } catch (err) {
+      next(err);
+    }
+  },
 };

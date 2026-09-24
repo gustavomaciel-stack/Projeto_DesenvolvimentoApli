@@ -129,4 +129,18 @@ export const matchService = {
 
     return matchRepository.cancel(id);
   },
+
+  remove: async (id: string, actorRole: 'USER' | 'ADMIN') => {
+    const match = await matchRepository.findById(id);
+    if (!match) {
+      throw new AppError("Partida não encontrada.", 404);
+    }
+
+    if (actorRole !== "ADMIN") {
+      throw new AppError("Acesso negado.", 403);
+    }
+
+    await matchRepository.remove(id);
+    return { deleted: true };
+  },
 };

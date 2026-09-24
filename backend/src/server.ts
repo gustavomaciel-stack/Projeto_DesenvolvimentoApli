@@ -5,21 +5,28 @@ import routes from './routes/index.js';
 import { corsMiddleware } from './middlewares/cors.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFound } from './middlewares/notFound.js';
+import { adminService } from './services/adminService.js';
 
 const app = express();
 
-app.use(corsMiddleware);
-app.use(express.json());
-app.use(routes);
+const startServer = async () => {
+  await adminService.ensureDefaultAdmin();
 
-app.use(notFound);
-app.use(errorHandler);
+  app.use(corsMiddleware);
+  app.use(express.json());
+  app.use(routes);
 
-const port = env.port;
+  app.use(notFound);
+  app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`MatchPoint backend running on http://localhost:${port}`);
-});
+  const port = env.port;
+
+  app.listen(port, () => {
+    console.log(`MatchPoint backend running on http://localhost:${port}`);
+  });
+};
+
+void startServer();
 
 process.on('SIGINT', async () => {
   await prisma.$disconnect();

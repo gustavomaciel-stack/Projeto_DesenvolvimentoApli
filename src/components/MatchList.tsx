@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+  deleteMatch,
   getParticipants,
   listMatches,
   type Match,
@@ -20,10 +21,27 @@ const statusLabels = {
 };
 
 export function MatchList({ mode, onCreate, onSelect }: Props) {
-  const { currentUserId, users } = useCurrentUser();
+  const { currentUserId, users, isAdmin } = useCurrentUser();
   const [matches, setMatches] = useState<Match[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+
+  async function handleDelete(matchId: string) {
+    const confirmed = window.confirm(
+      'Deseja excluir esta partida e todas as confirmações relacionadas?',
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await deleteMatch(matchId);
+      setMatches((previous) => previous.filter((match) => match.id !== matchId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao excluir partida.');
+    }
+  }
 
   const currentUser = users.find((user) => user.id === currentUserId);
 
@@ -146,12 +164,25 @@ export function MatchList({ mode, onCreate, onSelect }: Props) {
                 Organizada por {match.organizer.name}
               </p>
 
-              <button
-                className="button secondary"
-                onClick={() => onSelect(match.id)}
-              >
-                Ver detalhes
-              </button>
+              <div className="match-card-actions">
+                <button
+                  className="button secondary"
+                  onClick={() => onSelect(match.id)}
+                  type="button"
+                >
+                  Ver detalhes
+                </button>
+
+                {isAdmin && (
+                  <button
+                    className="button danger small"
+                    onClick={() => void handleDelete(match.id)}
+                    type="button"
+                  >
+                    Excluir
+                  </button>
+                )}
+              </div>
             </article>
           ))}
         </div>

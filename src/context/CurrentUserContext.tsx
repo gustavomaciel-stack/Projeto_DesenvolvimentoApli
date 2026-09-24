@@ -19,6 +19,8 @@ import {
 
 type CurrentUserContextValue = {
   currentUserId: string;
+  currentUser?: User;
+  isAdmin: boolean;
   setCurrentUserId: (id: string) => void;
   isAuthenticated: boolean;
   loginUser: (email: string, password: string) => Promise<void>;
@@ -34,6 +36,7 @@ const CurrentUserContext = createContext<CurrentUserContextValue | undefined>(
 export function CurrentUserProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<User[]>([]);
   const [currentUserId, setCurrentUserId] = useState("");
+  const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
   const [isAuthenticated, setIsAuthenticated] = useState(() =>
     Boolean(getToken()),
   );
@@ -43,23 +46,38 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
     setUsers(nextUsers);
     const authenticatedUserId =
       preferredUserId ?? getTokenUserId(getToken() ?? "");
+
+    let nextCurrentUserId = "";
+
     setCurrentUserId((selectedId) => {
       if (
         authenticatedUserId &&
         nextUsers.some((user) => user.id === authenticatedUserId)
-      )
+      ) {
+        nextCurrentUserId = authenticatedUserId;
         return authenticatedUserId;
-      if (!getToken()) return "";
-      return nextUsers.some((user) => user.id === selectedId)
+      }
+
+      if (!getToken()) {
+        nextCurrentUserId = "";
+        return "";
+      }
+
+      nextCurrentUserId = nextUsers.some((user) => user.id === selectedId)
         ? selectedId
         : (nextUsers[0]?.id ?? "");
+      return nextCurrentUserId;
     });
+
+    setCurrentUser(
+      nextUsers.find((user) => user.id === nextCurrentUserId) ?? undefined,
+    );
   };
 
   const loginUser = async (email: string, password: string) => {
-    const { token } = await login(email, password);
+    const { token, user } = await login(email, password);
     saveToken(token);
-    const userId = getTokenUserId(token);
+    const userId = getTokenUserId(token) || user?.id || "";
     setIsAuthenticated(true);
     await refreshUsers(userId);
   };
@@ -68,6 +86,7 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
     logout();
     setIsAuthenticated(false);
     setCurrentUserId("");
+    setCurrentUser(undefined);
   };
 
   useEffect(() => {
@@ -79,6 +98,8 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
     <CurrentUserContext.Provider
       value={{
         currentUserId,
+        currentUser,
+        isAdmin: currentUser?.role === 'ADMIN',
         setCurrentUserId,
         isAuthenticated,
         loginUser,

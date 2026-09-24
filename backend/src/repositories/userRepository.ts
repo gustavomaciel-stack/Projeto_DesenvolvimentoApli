@@ -9,8 +9,21 @@ export const userRepository = {
     return prisma.user.findUnique({ where: { id } });
   },
 
-  create: (data: { name: string; email: string; passwordHash: string }) => {
+  create: (data: {
+    name: string;
+    email: string;
+    passwordHash: string;
+    role?: 'USER' | 'ADMIN';
+  }) => {
     return prisma.user.create({ data });
+  },
+
+  updateRole: (id: string, role: 'USER' | 'ADMIN') => {
+    return prisma.user.update({ where: { id }, data: { role } });
+  },
+
+  remove: (id: string) => {
+    return prisma.user.delete({ where: { id } });
   },
 
   findAll: () => {

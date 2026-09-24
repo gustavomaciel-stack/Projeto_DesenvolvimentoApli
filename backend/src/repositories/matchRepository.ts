@@ -56,6 +56,10 @@ export const matchRepository = {
     });
   },
 
+  remove: (id: string) => {
+    return prisma.match.delete({ where: { id } });
+  },
+
   updateStatus: (id: string, status: 'ABERTA' | 'COMPLETA') => {
     return prisma.match.update({
       where: { id },
