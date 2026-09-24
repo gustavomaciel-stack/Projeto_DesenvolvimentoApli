@@ -94,6 +94,20 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    const handleTokenExpired = () => {
+      setIsAuthenticated(false);
+      setCurrentUserId("");
+      setCurrentUser(undefined);
+    };
+
+    const authChannel = globalThis as unknown as EventTarget;
+    authChannel.addEventListener("matchpoint:logout", handleTokenExpired);
+    return () => {
+      authChannel.removeEventListener("matchpoint:logout", handleTokenExpired);
+    };
+  }, []);
+
+  useEffect(() => {
     const token = getToken();
     void refreshUsers(token ? getTokenUserId(token) : undefined);
   }, []);
