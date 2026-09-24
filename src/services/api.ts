@@ -1,4 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
+
 export const TOKEN_STORAGE_KEY = "matchpoint_token";
 
 export type User = {
@@ -43,6 +44,7 @@ export type MatchInput = {
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
@@ -52,11 +54,15 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     },
   });
 
-  const body = await response.json().catch(() => null);
+  const body = (await response.json().catch(() => null)) as
+    | { message?: string }
+    | null;
+
   if (!response.ok) {
     if (response.status === 401) {
       localStorage.removeItem(TOKEN_STORAGE_KEY);
     }
+
     throw new Error(
       body?.message ?? "Não foi possível concluir a solicitação.",
     );
@@ -90,6 +96,7 @@ export function getTokenUserId(token: string) {
     const decoded = JSON.parse(
       atob(payload.replace(/-/g, "+").replace(/_/g, "/")),
     );
+
     return typeof decoded.userId === "string" ? decoded.userId : "";
   } catch {
     return "";
@@ -148,14 +155,14 @@ export function cancelMatch(id: string, organizerId: string) {
 }
 
 export function joinMatch(id: string, userId: string) {
-  return request("/matches/" + id + "/join", {
+  return request(`/matches/${id}/join`, {
     method: "POST",
     body: JSON.stringify({ userId }),
   });
 }
 
 export function leaveMatch(id: string, userId: string) {
-  return request("/matches/" + id + "/leave", {
+  return request(`/matches/${id}/leave`, {
     method: "POST",
     body: JSON.stringify({ userId }),
   });
