@@ -31,6 +31,9 @@ export const matchRepository = {
   create: (data: {
     sport: string;
     location: string;
+    address?: string | null;
+  pricePerPerson?: number;
+  notes?: string | null;
     date: Date;
     time: string;
     vacancies: number;
@@ -42,6 +45,9 @@ export const matchRepository = {
   update: (id: string, data: {
     sport: string;
     location: string;
+    address?: string | null;
+  pricePerPerson?: number;
+  notes?: string | null;
     date: Date;
     time: string;
     vacancies: number;

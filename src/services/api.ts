@@ -18,6 +18,9 @@ export type Match = {
   id: string;
   sport: string;
   location: string;
+  address?: string | null;
+  pricePerPerson?: number;
+  notes?: string | null;
   date: string;
   time: string;
   vacancies: number;
@@ -39,6 +42,9 @@ export type Participant = {
 export type MatchInput = {
   sport: string;
   location: string;
+  address?: string | null;
+  pricePerPerson?: number;
+  notes?: string | null;
   date: string;
   time: string;
   vacancies: number;
@@ -117,6 +123,10 @@ export function registerUser(data: {
     method: "POST",
     body: JSON.stringify(data),
   });
+}
+
+export function getAuthenticatedUser() {
+  return request<User>("/auth/me");
 }
 
 export function listUsers() {

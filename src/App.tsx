@@ -14,21 +14,25 @@ import './App.css';
 type View = 'list' | 'my-matches' | 'detail' | 'create' | 'edit' | 'login' | 'admin-users';
 
 function AppContent() {
-  const { currentUserId, isAuthenticated, logoutUser, users, isAdmin } =
+  const { currentUserId, isAuthenticated, logoutUser, users, isAdmin, isRestoring, sessionError, retrySession } =
     useCurrentUser();
 
-  const [view, setView] = useState<View>('login');
+  const [requestedView, setView] = useState<View>('my-matches');
+  const view = isAuthenticated ? (requestedView === 'login' ? 'my-matches' : requestedView) : 'login';
   const [selectedMatchId, setSelectedMatchId] = useState('');
   const [editingMatch, setEditingMatch] = useState<Match>();
 
   const currentUser = users.find((user) => user.id === currentUserId);
+
+  if (isRestoring) return <main className="content" aria-live="polite">Recuperando sua sessão...</main>;
+  if (sessionError && isAuthenticated) return <main className="content"><p className="error">{sessionError}</p><button className="button" onClick={retrySession}>Tentar novamente</button><button className="button secondary" onClick={logoutUser}>Ir para login</button></main>;
 
   return (
     <div className="app-shell">
       <header className="topbar">
         <div>
           <p className="eyebrow">Partidas entre amigos</p>
-          <h1>MatchPoint</h1>
+          <h1><span className="brand-mark" aria-hidden="true">↗</span> MatchPoint<span className="brand-dot">.</span></h1>
 
           {view !== 'login' && isAuthenticated && (
             <p className="topbar-user">
@@ -39,11 +43,11 @@ function AppContent() {
 
         {view !== 'login' && (
           <nav className="topbar-actions" aria-label="Navegação principal">
-            <button type="button" onClick={() => setView('my-matches')}>
+            <button type="button" aria-current={view === 'my-matches' ? 'page' : undefined} onClick={() => setView('my-matches')}>
               Minhas partidas
             </button>
 
-            <button type="button" onClick={() => setView('list')}>
+            <button type="button" aria-current={view === 'list' ? 'page' : undefined} onClick={() => setView('list')}>
               Explorar partidas
             </button>
 

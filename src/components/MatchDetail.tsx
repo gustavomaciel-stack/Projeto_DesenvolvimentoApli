@@ -1,3 +1,4 @@
+import { sportIcon } from '../data/sports';
 import { useEffect, useState } from 'react';
 import {
   cancelMatch,
@@ -90,7 +91,7 @@ export function MatchDetail({ id, onBack, onEdit }: Props) {
       <div className="detail-header">
         <div>
           <p className="eyebrow">Detalhes da partida</p>
-          <h2>{match.sport}</h2>
+          <div className="sport-emblem" aria-hidden="true">{sportIcon(match.sport)}</div><h2>{match.sport}</h2>
           <p>
             {match.location} ·{' '}
             {new Date(match.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })} às {match.time}
@@ -103,6 +104,11 @@ export function MatchDetail({ id, onBack, onEdit }: Props) {
       </div>
 
       <div className="detail-panel">
+        {match.address && <p><strong>Endereço:</strong> {match.address}</p>}
+        <p><a className="button secondary" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.address || match.location)}`} target="_blank" rel="noopener noreferrer">Abrir no Google Maps</a></p>
+        <p><strong>Valor por pessoa:</strong> {match.pricePerPerson ? (match.pricePerPerson / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Grátis'}</p>
+        {Boolean(match.pricePerPerson) && <p className="muted">Pagamento combinado com o organizador.</p>}
+        {match.notes && <p style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}><strong>Observações:</strong> {match.notes}</p>}
         <p>
           <strong>Organizador:</strong> {match.organizer.name} (
           {match.organizer.email})

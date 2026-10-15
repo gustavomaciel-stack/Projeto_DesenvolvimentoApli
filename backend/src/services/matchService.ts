@@ -6,6 +6,9 @@ import { userRepository } from "../repositories/userRepository.js";
 export type MatchInput = {
   sport: string;
   location: string;
+  address?: string | null;
+  pricePerPerson?: number;
+  notes?: string | null;
   date: string;
   time: string;
   vacancies: number;
@@ -14,6 +17,16 @@ export type MatchInput = {
 
 const parseMatchInput = (data: MatchInput) => {
   const { sport, location, date, time, vacancies, organizerId } = data;
+  if (data.address != null && (typeof data.address !== "string" || data.address.length > 300)) {
+    throw new AppError("Informe um endereço com até 300 caracteres.", 400);
+  }
+  const pricePerPerson = data.pricePerPerson ?? 0;
+  if (!Number.isSafeInteger(pricePerPerson) || pricePerPerson < 0 || pricePerPerson > 100000000) {
+    throw new AppError("Informe um valor por pessoa válido.", 400);
+  }
+  if (data.notes != null && (typeof data.notes !== "string" || data.notes.length > 2000)) {
+    throw new AppError("As observações devem ter até 2000 caracteres.", 400);
+  }
   const parsedVacancies = Number(vacancies);
   const parsedDate = new Date(date);
 
@@ -35,6 +48,9 @@ const parseMatchInput = (data: MatchInput) => {
   return {
     sport,
     location,
+    address: data.address?.trim() || null,
+    pricePerPerson,
+    notes: data.notes?.trim() || null,
     date: parsedDate,
     time,
     vacancies: parsedVacancies,
@@ -60,6 +76,10 @@ export const matchService = {
       id: match.id,
       sport: match.sport,
       location: match.location,
+      address: match.address,
+      pricePerPerson: match.pricePerPerson,
+      notes: match.notes,
+      organizerId: match.organizerId,
       date: match.date,
       time: match.time,
       vacancies: match.vacancies,
@@ -109,6 +129,9 @@ export const matchService = {
     return matchRepository.update(id, {
       sport: input.sport,
       location: input.location,
+      address: input.address,
+      pricePerPerson: input.pricePerPerson,
+      notes: input.notes,
       date: input.date,
       time: input.time,
       vacancies: input.vacancies,

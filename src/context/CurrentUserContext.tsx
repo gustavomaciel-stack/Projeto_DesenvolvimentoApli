@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import {
+  getAuthenticatedUser,
   getToken,
   getTokenUserId,
   listUsers,
@@ -23,6 +24,9 @@ type CurrentUserContextValue = {
   isAdmin: boolean;
   setCurrentUserId: (id: string) => void;
   isAuthenticated: boolean;
+  isRestoring: boolean;
+  sessionError: string;
+  retrySession: () => void;
   loginUser: (email: string, password: string) => Promise<void>;
   logoutUser: () => void;
   users: User[];
@@ -34,6 +38,9 @@ const CurrentUserContext = createContext<CurrentUserContextValue | undefined>(
 );
 
 export function CurrentUserProvider({ children }: { children: ReactNode }) {
+  const [isRestoring, setIsRestoring] = useState(Boolean(getToken()));
+  const [sessionError, setSessionError] = useState("");
+  const [attempt, setAttempt] = useState(0);
   const [users, setUsers] = useState<User[]>([]);
   const [currentUserId, setCurrentUserId] = useState("");
   const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
@@ -62,6 +69,7 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
 
   const loginUser = async (email: string, password: string) => {
     const { token, user } = await login(email, password);
+    setSessionError("");
     saveToken(token);
     const userId = getTokenUserId(token) || user?.id || "";
 
@@ -83,10 +91,11 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
       });
     }
 
-    await refreshUsers(userId);
+    // O login já retorna a identidade; não depende da listagem de usuários.
   };
 
   const logoutUser = () => {
+    setSessionError("");
     logout();
     setIsAuthenticated(false);
     setCurrentUserId("");
@@ -108,9 +117,21 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const token = getToken();
-    void refreshUsers(token ? getTokenUserId(token) : undefined);
-  }, []);
+    let active = true;
+    if (!getToken()) { setIsRestoring(false); return; }
+    setIsRestoring(true);
+    setSessionError("");
+    void getAuthenticatedUser().then((user) => {
+      if (!active) return;
+      setCurrentUser(user);
+      setCurrentUserId(user.id);
+      setUsers([user]);
+      setIsAuthenticated(true);
+    }).catch((error: unknown) => {
+      if (active && getToken()) setSessionError(error instanceof Error ? error.message : "Não foi possível recuperar a sessão.");
+    }).finally(() => { if (active) setIsRestoring(false); });
+    return () => { active = false; };
+  }, [attempt]);
 
   return (
     <CurrentUserContext.Provider
@@ -120,6 +141,9 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
         isAdmin: currentUser?.role === 'ADMIN',
         setCurrentUserId,
         isAuthenticated,
+        isRestoring,
+        sessionError,
+        retrySession: () => setAttempt((value) => value + 1),
         loginUser,
         logoutUser,
         users,

@@ -338,3 +338,83 @@ select, input {
   color: #dcebe5;
   font: 14px Arial, sans-serif;
 }
+.match-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; margin: 24px 0; }
+.match-filters label { display: grid; gap: 8px; flex: 1 1 180px; }
+.match-filters input, .match-form select, .match-form textarea { width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; font: inherit; background: white; color: #172033; }
+.match-form textarea { resize: vertical; }
+
+/* Identidade visual MatchPoint */
+.app-shell { background: radial-gradient(ellipse at 100% 0, #dcefe9 0, transparent 38%), #f4f6fa; }
+.topbar { background: #102e30; padding-top: 22px; padding-bottom: 22px; text-align: left; border-bottom: 3px solid #b5ed7b; }
+.topbar h1 { font-size: 28px; letter-spacing: -1.2px; display: flex; align-items: center; gap: 8px; }
+.brand-mark { display: inline-grid; place-items: center; width: 34px; height: 34px; background: #b5ed7b; color: #102e30; border-radius: 10px; font-size: 27px; }
+.brand-dot { color: #b5ed7b; margin-left: -7px; }
+.eyebrow { color: #237969; font-family: inherit; font-size: 11px; letter-spacing: .15em; }
+.topbar .eyebrow { color: #a7c7c3; }
+.topbar-user { font-family: inherit; color: #c6dad6; }
+.topbar-actions { gap: 6px; }
+.topbar-actions button { border: 1px solid transparent; border-radius: 10px; background: transparent; padding: 11px 15px; color: #dcebe8; font-size: 13px; }
+.topbar-actions button:hover, .topbar-actions button[aria-current="page"] { background: #ffffff12; border-color: #ffffff20; color: #c5f59d; }
+.content { max-width: 1120px; margin-top: 36px; }
+h2 { letter-spacing: -1px; color: #173b3c; }
+.section-heading h2, .detail-header h2, .form-section h2 { font-size: clamp(26px, 4vw, 36px); }
+.button { display: inline-flex; justify-content: center; align-items: center; min-height: 43px; border-radius: 11px; background: #176b59; padding: 12px 19px; color: white; text-decoration: none; font-family: inherit; font-size: 13px; font-weight: 650; transition: background .15s, transform .15s; }
+.button:hover { background: #105543; }
+.button.secondary { background: #e8efee; color: #285451; }
+.button.secondary:hover { background: #d8e6e3; }
+.button.danger { background: #fff0ef; color: #aa3730; }
+.button.danger:hover { background: #fbe0dd; }
+.button:active { transform: translateY(1px); }
+.match-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 285px), 1fr)); gap: 22px; }
+.match-card, .detail-panel, .form-section, .auth-card, .admin-user-card { border: 1px solid #e1e8e9; border-radius: 20px; box-shadow: 0 6px 24px #12353606; }
+.match-card { padding: 24px; position: relative; display: flex; flex-direction: column; transition: box-shadow .18s, border-color .18s; overflow-wrap: anywhere; }
+.match-card:hover { border-color: #a7c9bf; box-shadow: 0 12px 32px #1235360c; }
+.match-card .status { align-self: flex-end; }
+.match-card h3 { color: #183e3b; font-family: inherit; font-size: 22px; letter-spacing: -.5px; margin-top: 14px; }
+.match-card p, .detail-panel { font-family: inherit; }
+.match-card p { margin-bottom: 10px; font-size: 14px; }
+.match-card-actions { margin-top: auto; padding-top: 18px; border-top: 1px solid #edf1f2; }
+.match-card-actions .button { flex: 1; }
+.sport-emblem { width: 58px; height: 58px; display: grid; place-items: center; font-size: 31px; background: #edf5e8; border: 1px solid #dfead9; border-radius: 17px; }
+.status { border-radius: 999px; padding: 6px 10px; font-family: inherit; font-size: 10px; letter-spacing: .04em; }
+.muted { color: #63787c; line-height: 1.65; font-size: 14px; }
+.match-filters { background: #fff; border: 1px solid #e1e8e9; padding: 20px; border-radius: 16px; gap: 14px; }
+.match-filters label { font-size: 12px; font-weight: 650; color: #53686d; }
+input, select, textarea, .match-filters input, .match-form select, .match-form textarea { border: 1px solid #dce4e5; background: #fbfcfd; border-radius: 10px; padding: 12px 14px; color: #203d43; font-family: inherit; font-size: 14px; min-width: 0; }
+input:hover, select:hover, textarea:hover { border-color: #9dbeb5; }
+.form-section { width: min(100%, 860px); padding: clamp(22px, 4vw, 40px); }
+.form-section .match-form { max-width: none; gap: 20px; }
+.form-section .match-form label { font-family: inherit; color: #3f595c; font-size: 13px; gap: 9px; }
+.sport-picker { border: 0; margin: 0; padding: 0 0 8px; min-width: 0; }
+.sport-picker legend, .form-divider { color: #176b59; font-size: 13px; font-weight: 750; letter-spacing: .04em; margin-bottom: 14px; }
+.sport-picker > p { margin: 0 0 16px; }
+.sport-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; }
+.sport-option { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; border: 1px solid #e0e7e8; border-radius: 13px; padding: 14px 5px; background: #fff; color: #4c6467; font-size: 12px; min-height: 90px; }
+.sport-option span { font-size: 25px; }
+.sport-option:hover { background: #f3f8ef; border-color: #91bda8; }
+.sport-option.selected { background: #edf6e6; border: 2px solid #287b59; color: #194b38; font-weight: 700; padding: 13px 4px; }
+.form-divider { border-top: 1px solid #e5ebec; padding-top: 24px; margin-top: 4px; margin-bottom: 0; }
+.form-actions { flex-wrap: wrap; }
+.match-form > .form-actions { justify-content: flex-end; padding-top: 20px; border-top: 1px solid #e5ebec; }
+.auth-page { padding: 22px 0; }
+.auth-card { padding: 38px; width: min(100%, 460px); }
+.auth-card h2 { font-size: 29px; }
+.auth-form label { font-family: inherit; text-align: left; font-size: 13px; }
+.auth-switch { font-family: inherit; color: #176b59; }
+.detail-panel { padding: 28px; }
+.detail-header .sport-emblem { margin-bottom: 16px; }
+.participant-list li { border-radius: 12px; background: white; border: 1px solid #e1e8e9; padding: 17px; font-family: inherit; }
+.empty { background: #fff; border: 1px dashed #c2d3cd; border-radius: 18px; padding: 48px 24px; color: #63787c; }
+.error { border-radius: 9px; font-family: inherit; }
+@media (max-width: 700px) {
+  .topbar { padding: 20px; gap: 18px; }
+  .topbar-actions { display: flex; gap: 4px; }
+  .topbar-actions button { padding: 10px; font-size: 12px; }
+  .content { margin-top: 24px; }
+  .sport-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sport-option { font-size: 11px; }
+  .match-filters { padding: 16px; }
+  .match-filters .button { width: 100%; }
+  .auth-card { padding: 26px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
